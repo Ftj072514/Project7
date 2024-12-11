@@ -1,19 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
+#define SKIP_LIST_P 0.5
 struct node{
     int val;
     int level;
     struct node* next;
+    struct node* down;
 }typedef Node;
 
-int randLevel(){
-    int num;
+int randLevel(){ //return the level of a node
+    int num = 1;
+    srand((unsigned int)time(NULL));
+    while((double)rand() / RAND_MAX < SKIP_LIST_P){ //SKIP_LIST_P is 0.5, the left side generates a number in (0,1) randomly
+        num++;
+    }
     return num;
 }
+
 //list[] is an array to store the skip list, and each element list[i] represents a level of the skip list
-void Search(Node* list[], int val, int level){   //level represents the valid number of levels in list[]
-    return;
+Node* Search(Node* list[], int val, int level){   //level represents the valid number of levels in list[]
+    Node* pre = list[level]->next;
+    Node* cur = pre->next;
+    while(1){
+        if(pre->level == 1){ //When the list comes to level 1
+            while(pre->val != val){ 
+                pre = pre->next;
+                if(pre->val > val){ //When we cannot find the exact value
+                    return NULL;
+                }
+            }
+            return pre; //Find the exact value
+        }
+        if(pre->val == val){ //A lucky situation
+            while(pre->level != 1){
+                pre = pre->down;
+            }
+            return pre;
+        }
+        else if(cur == NULL || pre->val < val && cur->val > val){ //go down
+            pre = pre->down;
+            cur = pre->next;
+        }
+        else{ //forward
+            cur = cur->next;
+            pre = pre->next;
+        }
+    }
+
 }
 
 void Insert(Node* list[], int val, int level){
@@ -23,3 +58,4 @@ void Insert(Node* list[], int val, int level){
 void Delete(Node* list[], int val, int level){
     return;
 }
+
