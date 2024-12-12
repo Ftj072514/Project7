@@ -61,7 +61,7 @@ void Insert(Node* list[], int val, int level) {
     newNode->down = NULL;
 
 
-    for (int i = 1; i < newNodeLevel; i++) {
+    for (int i = 1; i <= newNodeLevel; i++) {
         newNode->down = list[i]; 
         list[i] = newNode;
     }
@@ -79,7 +79,36 @@ void Insert(Node* list[], int val, int level) {
 }
 
 
-void Delete(Node* list[], int val, int level){
-    return;
+void Delete(Node* list[], int val, int level) {
+    Node** update = (Node**)malloc(sizeof(Node*) * level);
+    for (int i = 1; i <= level; i++) {
+        update[i] = list[i];
+    }
+
+    for (int i = level ; i >= 1; i--) {
+        Node* pre = update[i];
+        Node* cur = pre->next;
+        while (cur != NULL && cur->val < val) {
+            pre = cur;
+            cur = cur->next;
+        }
+
+        if (cur != NULL && cur->val == val) {
+            pre->next = cur->next;
+            update[i] = pre;
+        } else {
+            update[i] = NULL;
+        }
+    }
+
+    for (int i = 1; i <= level; i++) {
+        if (update[i] != NULL) {
+            Node* toDelete = update[i]->next;
+            update[i]->next = toDelete->next; 
+            free(toDelete); 
+        }
+    }
+
+    free(update);
 }
 
