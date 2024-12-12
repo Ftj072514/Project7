@@ -51,9 +51,33 @@ Node* Search(Node* list[], int val, int level){   //level represents the valid n
 
 }
 
-void Insert(Node* list[], int val, int level){
-    return;
+void Insert(Node* list[], int val, int level) {
+    int newNodeLevel = randLevel();
+
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->val = val;
+    newNode->level = newNodeLevel;
+    newNode->next = NULL;
+    newNode->down = NULL;
+
+
+    for (int i = 1; i < newNodeLevel; i++) {
+        newNode->down = list[i]; 
+        list[i] = newNode;
+    }
+
+    for (int i = newNodeLevel; i >= 1; i--) {
+        Node* pre = list[i];
+        Node* cur = pre->next;
+        while (cur != NULL && cur->val < val) {
+            pre = cur;
+            cur = cur->next;
+        }
+        newNode->next = cur; 
+        pre->next = newNode;
+    }
 }
+
 
 void Delete(Node* list[], int val, int level){
     return;
